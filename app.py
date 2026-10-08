@@ -1,6 +1,6 @@
 from flask import Flask, send_file
 from config import Config
-from controllers import FloresController
+from controller import FloresController
 
 app = Flask(__name__)
 flores_controller = FloresController()
