@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TESSA - Flores</title>
+</head>
+<body>
+    <h1>TESSA Corporation - Gestión de Flores</h1>
+    
+    <h3>Agregar Nueva Flor</h3>
+    <form id="flowerForm">
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <input type="text" id="color" placeholder="Color" required>
+        <input type="number" id="precio_tallo" placeholder="Precio por tallo" step="0.01" required>
+        <button type="submit">Agregar Flor</button>
+    </form>
+
+    <h3>Lista de Flores</h3>
+    <table border="1" id="floresTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Color</th>
+                <th>Precio Tallo</th>
+                <th>Descripción Agronómica</th>
+            </tr>
+        </thead>
+        <tbody id="floresBody">
+        </tbody>
+    </table>
+
+    <script>
+        async function loadFlores() {
+            try {
+                const response = await fetch('/flores');
+                const flores = await response.json();
+                const tbody = document.getElementById('floresBody');
+                tbody.innerHTML = flores.map(flor => `
+                    <tr>
+                        <td>${flor.id}</td>
+                        <td>${flor.nombre}</td>
+                        <td>${flor.color}</td>
+                        <td>$${flor.precio_tallo}</td>
+                        <td>${flor.descripcion_agronomica}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                alert('Error cargando flores: ' + error.message);
+            }
+        }
+
+        document.getElementById('flowerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                nombre: document.getElementById('nombre').value,
+                color: document.getElementById('color').value,
+                precio_tallo: parseFloat(document.getElementById('precio_tallo').value)
+            };
+            
+            try {
+                const response = await fetch('/flores', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    document.getElementById('flowerForm').reset();
+                    loadFlores();
+                    alert('Flor agregada correctamente!');
+                } else {
+                    alert('Error al agregar la flor');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        };
+
+        // Cargar flores al iniciar
+        loadFlores();
+    </script>
+</body>
+</html>
