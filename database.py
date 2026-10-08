@@ -4,7 +4,7 @@ from config import Config
 
 class FloresDB:
     def __init__(self):
-        self.db_path = Config.DATABASE_PATH
+        self.db_path = Config.DATABASE_URL
     
     def get_connection(self):
         try:
